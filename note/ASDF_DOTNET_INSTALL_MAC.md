@@ -34,10 +34,14 @@ asdf list all dotnet-core
 這會列出非常多版本（包括不同的 Patch 號）。建議找出您需要的 Major 版本最新版（如 `8.0.xxx` 或 `7.0.xxx`）。
 
 ### 執行安裝
-假設我們想要安裝 .NET 8.0 SDK (例如 `8.0.204`)，請執行：
+假設我們想要安裝最新版的 .NET 8.0 SDK (例如 `8.0.204`)，或者安裝本專案所需的 `6.0.425`，請執行：
 
 ```bash
+# 安裝 .NET 8.0
 asdf install dotnet-core 8.0.204
+
+# 安裝 .NET 6.0 (本專案需求)
+asdf install dotnet-core 6.0.425
 ```
 
 > **注意**：下載與解壓縮過程可能會需要一些時間，請耐心等候。
@@ -47,18 +51,19 @@ asdf install dotnet-core 8.0.204
 安裝完成後，您必須告訴 asdf 在哪裡使用這個版本。您可以選擇設定為全域 (Global) 或專案目錄 (Local) 層級。
 
 ### 設定為全域 (Global)
-如果您希望整個系統預設都使用這個版本：
+如果您希望整個系統預設都使用某個版本（例如最新版）：
 
 ```bash
+# -u 參數等同於 --home，會寫入 ~/.tool-versions (這是新版 asdf 的語法)
 asdf set -u dotnet-core 8.0.204
 ```
-這會在您的主目錄 (`~/.tool-versions`) 中記錄該版本（`-u` 等同於 `--home`）。
+這會在您的主目錄 (`~/.tool-versions`) 中記錄該版本。
 
 ### 設定為單一專案 (Local)
-如果您只希望在這個特定專案中使用，請進入專案根目錄後執行：
+如果您只希望在這個特定專案中使用，請進入專案根目錄後執行（以本專案使用的 `6.0.425` 為例）：
 
 ```bash
-asdf set dotnet-core 8.0.204
+asdf set dotnet-core 6.0.425
 ```
 這會在當前專案資料夾下建立或更新 `.tool-versions` 檔案，確保團隊其他開發者如果也用 asdf，能自動匹配對應的版本。
 
@@ -94,6 +99,13 @@ dotnet --version
 dotnet new globaljson --sdk-version 6.0.425
 ```
 設定好之後，只要在該目錄下執行任何 `dotnet` 相關指令，CLI 就會自動優先使用 `global.json` 所定義的 SDK 版本。
+
+> **⚠️ 極度重要：asdf 與 global.json 的版本衝突地雷**
+>
+> 因為 `asdf` 會將每個安裝的 SDK 版本實體隔離（各自存放在 `~/.asdf/installs/dotnet-core/<版本號>`），這與原本在 Windows 上所有 SDK 都裝在同一個目錄下的行為不同。
+> 如果您的 `.tool-versions` (asdf 啟用的版本) 是 `8.0.204`，但專案內的 `global.json` 鎖定為 `6.0.425`，執行 `dotnet` 指令時會報錯：「找不到指定的 SDK 版本」。
+> 
+> **解決方式**：在使用 `global.json` 的專案中，**必須確保 asdf 的 Local 版本 (`.tool-versions`) 設定與 `global.json` 的版本完全一致**。也就是在專案內一定要正確執行過 `asdf set dotnet-core 6.0.425`。
 
 ---
 
