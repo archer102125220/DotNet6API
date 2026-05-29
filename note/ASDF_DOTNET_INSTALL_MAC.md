@@ -109,6 +109,28 @@ dotnet new globaljson --sdk-version 6.0.425
 
 ---
 
+## 7. 解決 IDE 找不到 .NET SDK 的問題 (設定 DOTNET_ROOT)
+
+透過 asdf 安裝的 .NET SDK 會存放在 asdf 的內部資料夾中，並且透過 shim 來執行。這會導致 IDE（如 JetBrains Rider、Visual Studio Code）或 C# 開發套件無法自動偵測到 .NET SDK 的實際安裝路徑，進而出現找不到 SDK 的錯誤。
+
+為了解決這個問題，`asdf-dotnet-core` 外掛提供了一個內建的輔助腳本。它能自動根據您當前所在的目錄，動態切換並設定 `DOTNET_ROOT` 環境變數。
+
+請將以下指令加入您的 Shell 設定檔（例如 `~/.zshrc` 或 `~/.bash_profile`）的結尾（請務必放在 asdf 初始化指令**之後**）：
+
+**對於 Zsh 使用者 (macOS 預設)：**
+```bash
+. ~/.asdf/plugins/dotnet-core/set-dotnet-home.zsh
+```
+
+**對於 Bash 使用者：**
+```bash
+. ~/.asdf/plugins/dotnet-core/set-dotnet-home.bash
+```
+
+加入並存檔後，請執行 `source ~/.zshrc` (或對應檔案) 重新載入設定。未來只要透過終端機啟動 IDE，或是重新啟動 IDE，它們就能透過 `DOTNET_ROOT` 變數正確找到 .NET SDK。
+
+---
+
 ## 補充筆記 (關於 .NET 全域工具)
 
 如果您習慣透過 `dotnet tool install -g <tool_name>` 安裝全域命令列工具 (例如 `dotnet-ef`)，它們預設會安裝在 `~/.dotnet/tools`。
